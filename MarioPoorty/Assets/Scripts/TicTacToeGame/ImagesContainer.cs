@@ -6,5 +6,6 @@ namespace TicTacToeGame {
     public class ImagesContainer : ScriptableObject {
         public Sprite xImage;
         public Sprite emptyImage;
+        public Sprite circleImage;
     }
 }
