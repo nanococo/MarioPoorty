@@ -38,16 +38,6 @@ using UnityEngine;
                 }
             }
             return CheckDiagonals();
-            
-            // var res = "";
-            // for (var i = 0; i < 3; i++) {
-            //     for (var j = 0; j < 3; j++) {
-            //         res+= _grid[i,j].GetComponent<Cell>().CellMark+", ";
-            //     }
-            //
-            //     res += "\n";
-            // }
-            // Debug.Log(res);
         }
 
         private bool CheckColumn(int j) {

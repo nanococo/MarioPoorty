@@ -6,7 +6,7 @@ namespace TicTacToeGame {
         public ImagesContainer imagesContainer;
         public TicTacToeMarks CellMark { set; get; } = TicTacToeMarks.Empty;
         public TicTacToeController TicTacToeController { get; set; }
-        
+
         void OnMouseEnter() {
             if (CellMark.Equals(TicTacToeMarks.Empty)) {
                 switch (TicTacToeController.CurrentMark) {

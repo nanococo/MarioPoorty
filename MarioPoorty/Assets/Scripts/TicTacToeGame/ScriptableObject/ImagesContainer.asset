@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xImage: {fileID: 21300000, guid: 8bea6151dfee0a143a52be84d371a050, type: 3}
   emptyImage: {fileID: 21300000, guid: 3b396fd4e54446f429cb746d7877782a, type: 3}
-  circleImage: {fileID: 0}
+  circleImage: {fileID: 21300000, guid: db43e115c2d0a8746840255d84bfabb5, type: 3}
