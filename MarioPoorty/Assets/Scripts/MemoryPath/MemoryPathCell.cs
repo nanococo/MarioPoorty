@@ -6,10 +6,10 @@ using UnityEngine;
 namespace MemoryPath {
     public class MemoryPathCell : MonoBehaviour {
 
-        public bool interact = false;
+        public bool interact;
         
         [SerializeField]
-        private ImagesContainer imagesContainer;
+        public ImagesContainer imagesContainer;
 
         public MemoryPathController MemoryPathController { get; set; }
 
