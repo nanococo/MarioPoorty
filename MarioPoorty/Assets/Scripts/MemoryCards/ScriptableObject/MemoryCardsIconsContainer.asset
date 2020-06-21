@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3683dfe0c69c40518796967baa8e5013, type: 3}
+  m_Name: MemoryCardsIconsContainer
+  m_EditorClassIdentifier: 
+  coin: {fileID: 21300000, guid: 21f89e421ba452d43937cda5d64c6a01, type: 3}
+  banana: {fileID: 21300000, guid: c03b6fb9055df0a4c960b4f43e92385e, type: 3}
+  redShell: {fileID: 21300000, guid: add96ffa6d939684dad6d2b5f4268821, type: 3}
+  greenShell: {fileID: 21300000, guid: 442eb1103c4d86f418ba11e863d99417, type: 3}
+  blueShell: {fileID: 21300000, guid: 213286334f2aa064a92dd504a7dd1577, type: 3}
+  mushroom: {fileID: 21300000, guid: 8364421b87f58be4798341a0ea606486, type: 3}
+  flower: {fileID: 21300000, guid: df67254ed63a7b04fb5195c1298166b3, type: 3}
+  star: {fileID: 21300000, guid: 22e54aa87ee02fe4c912bb6b175321a4, type: 3}
+  blooper: {fileID: 21300000, guid: e0104c23a63bc85448e35d2c4d4dd888, type: 3}
+  mysteryBox: {fileID: 21300000, guid: b195e6a6cb53f99459b6bfb93ca9bbb0, type: 3}

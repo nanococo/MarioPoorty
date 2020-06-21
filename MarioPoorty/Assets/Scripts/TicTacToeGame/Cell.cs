@@ -37,8 +37,9 @@ namespace TicTacToeGame {
                     gameObject.GetComponent<SpriteRenderer>().sprite = imagesContainer.circleImage;
                     break;
             }
+            TicTacToeController.selectedSquares++;
             TicTacToeController.TickTurn();
-            Debug.Log(TicTacToeController.CheckWin());
+            TicTacToeController.CheckWin();
         }
     }
 }

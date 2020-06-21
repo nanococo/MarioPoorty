@@ -1,4 +1,5 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
 
  namespace TicTacToeGame {
@@ -6,10 +7,23 @@ using UnityEngine;
 
         public GameObject cellPrefab;
         private GameObject[,] _grid = new GameObject[3,3];
+        private bool _firstPlayer = true;
+        public int selectedSquares; 
+
+
+        [SerializeField] private GameObject winText;
+        [SerializeField] private GameObject gameOverText;
+
+        [SerializeField] private GameObject playerText;
+        [SerializeField] private GameObject helperText;
+
         public TicTacToeMarks CurrentMark { private set; get; } = TicTacToeMarks.XMark;
 
         private void Start() {
+            winText.SetActive(false);
+            gameOverText.SetActive(false);
             
+            playerText.GetComponent<TextMeshProUGUI>().color = Color.magenta;
             var y = 2;
             for (var i=0;i<3;i++) {
                 var x = -2;
@@ -25,19 +39,40 @@ using UnityEngine;
             }
         }
 
-        public bool CheckWin() {
-
-
+        public void CheckWin() {
             for (var lines=0; lines<3; lines++) {
                 if (CheckRow(lines)) {
-                    return true;
+                    SetWin(true);
+                    return;
                 }
 
                 if (CheckColumn(lines)) {
-                    return true;
+                    SetWin(true);
+                    return;
                 }
             }
-            return CheckDiagonals();
+
+            if (CheckDiagonals()) {
+                SetWin(true);
+            }
+            else {
+                SetWinFilled();
+            }
+        }
+
+        private void SetWinFilled() {
+            if (selectedSquares>=9) {
+                gameOverText.SetActive(true);
+            }
+        }
+
+        private void SetWin(bool winLose) {
+            if (winLose && _firstPlayer) {
+                winText.SetActive(true);
+            }
+            else {
+                gameOverText.SetActive(true);
+            }
         }
 
         private bool CheckColumn(int j) {
@@ -90,9 +125,15 @@ using UnityEngine;
         public void TickTurn() {
             if (CurrentMark == TicTacToeMarks.XMark) {
                 CurrentMark = TicTacToeMarks.Circle;
+                _firstPlayer = true;
+                helperText.GetComponent<TextMeshProUGUI>().color = Color.magenta;
+                playerText.GetComponent<TextMeshProUGUI>().color = Color.white;
             }
             else {
                 CurrentMark = TicTacToeMarks.XMark;
+                _firstPlayer = false;
+                helperText.GetComponent<TextMeshProUGUI>().color = Color.white;
+                playerText.GetComponent<TextMeshProUGUI>().color = Color.magenta;
             }
         }
     }
