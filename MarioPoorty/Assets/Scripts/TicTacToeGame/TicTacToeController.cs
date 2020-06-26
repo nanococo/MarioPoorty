@@ -1,18 +1,23 @@
 ﻿using System;
+using Board.Character;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
- namespace TicTacToeGame {
+namespace TicTacToeGame {
     public class TicTacToeController : MonoBehaviour {
 
         public GameObject cellPrefab;
         private GameObject[,] _grid = new GameObject[3,3];
         private bool _firstPlayer = true;
-        public int selectedSquares; 
+        public int selectedSquares;
+
+        private GameMaster.GameMaster _gameMaster;
 
 
         [SerializeField] private GameObject winText;
         [SerializeField] private GameObject gameOverText;
+        [SerializeField] private GameObject continueBtn;
 
         [SerializeField] private GameObject playerText;
         [SerializeField] private GameObject helperText;
@@ -20,8 +25,18 @@ using UnityEngine;
         public TicTacToeMarks CurrentMark { private set; get; } = TicTacToeMarks.XMark;
 
         private void Start() {
+            try {
+                _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+                _gameMaster.HideBoard();
+                _gameMaster.HidePlayers();
+            }
+            catch (Exception) {
+                //ignored
+            }
+
             winText.SetActive(false);
             gameOverText.SetActive(false);
+            continueBtn.SetActive(false);
             
             playerText.GetComponent<TextMeshProUGUI>().color = Color.magenta;
             var y = 2;
@@ -63,6 +78,9 @@ using UnityEngine;
         private void SetWinFilled() {
             if (selectedSquares>=9) {
                 gameOverText.SetActive(true);
+                var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                player.turnCooldown = 1;
+                continueBtn.SetActive(true);
             }
         }
 
@@ -72,7 +90,11 @@ using UnityEngine;
             }
             else {
                 gameOverText.SetActive(true);
+                var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                player.turnCooldown = 1;
+                player.needUpdateUiOnBoard = true;
             }
+            continueBtn.SetActive(true);
         }
 
         private bool CheckColumn(int j) {
@@ -135,6 +157,11 @@ using UnityEngine;
                 helperText.GetComponent<TextMeshProUGUI>().color = Color.white;
                 playerText.GetComponent<TextMeshProUGUI>().color = Color.magenta;
             }
+        }
+        
+        public void LoadBoard() {
+            _gameMaster.TurnChange();
+            SceneManager.LoadScene("MainBoard");
         }
     }
  }

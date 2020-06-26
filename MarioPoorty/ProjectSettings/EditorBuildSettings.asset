@@ -4,5 +4,32 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainBoard.unity
+    guid: ede131d39f7f6a04ca8f7ba008a5b95e
+  - enabled: 1
+    path: Assets/Scenes/MainMenuScene.unity
+    guid: ec12265a5f9a4f441b8527d85947f750
+  - enabled: 1
+    path: Assets/Scenes/MemoryPath.unity
+    guid: 76e18a819da2f1d4586449df429e7400
+  - enabled: 1
+    path: Assets/Scenes/BomberMario.unity
+    guid: 61817c9d4afcf2141870c23458ec280f
+  - enabled: 1
+    path: Assets/Scenes/CollectTheCoins.unity
+    guid: 6b40f957bb5bbde40b41eba09dbc978f
+  - enabled: 1
+    path: Assets/Scenes/GuessWho.unity
+    guid: a1c8f251dee86ee4bad30d0ab8ea3639
+  - enabled: 1
+    path: Assets/Scenes/LettersSoup.unity
+    guid: 98c8d31772292e7478a35b1ed46c4a38
+  - enabled: 1
+    path: Assets/Scenes/MemoryCards.unity
+    guid: 96cbd7d6c8bc3ef47a72f7a6dfc608b1
+  - enabled: 1
+    path: Assets/Scenes/TicTacToe.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects: {}

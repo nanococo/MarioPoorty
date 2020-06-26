@@ -1,9 +1,11 @@
 ﻿using System;
+using Board.Character;
 using BomberMario.Bombs;
 using LetterSoup;
 using TicTacToeGame;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace BomberMario {
@@ -12,6 +14,7 @@ namespace BomberMario {
         private int _size;
         private const int NumberOfBombs = 7;
         private int _totalBombs;
+        private GameMaster.GameMaster _gameMaster;
         
         public int simpleBombAmount;
         public int doubleBombAmount;
@@ -30,6 +33,7 @@ namespace BomberMario {
         [SerializeField] private GameObject cameraSecond; 
         [SerializeField] public GameObject gameOverText;
         [SerializeField] public GameObject winText;
+        [SerializeField] public GameObject continueBtn;
         
         [SerializeField] public GameObject simpleBombCount;
         [SerializeField] public GameObject doubleBombCount;
@@ -39,7 +43,10 @@ namespace BomberMario {
         
 
         // Start is called before the first frame update
-        private void Start() {
+        private void Start() { 
+            _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+            _gameMaster.HideBoard();
+            _gameMaster.HidePlayers();
             var values = Enum.GetValues(typeof(Size));
             _size = (int) values.GetValue(Random.Range(0, 3));
             Board = new GameObject[_size, _size];
@@ -48,6 +55,7 @@ namespace BomberMario {
             
             gameOverText.SetActive(false);
             winText.SetActive(false);
+            continueBtn.SetActive(false);
 
             BoardDraw();
             AdjustCameraSize();
@@ -56,14 +64,18 @@ namespace BomberMario {
         }
 
 
-        public void EndGame() {
+        private void EndGame() {
             Debug.Log(treasureLeft);
             if (treasureLeft<=0) {
                 winText.SetActive(true);
                 LockAllCells();
             } else if (_totalBombs<=0) {
                 gameOverText.SetActive(true);
+                var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                player.turnCooldown = 1;
+                player.needUpdateUiOnBoard = true;
             }
+            continueBtn.SetActive(true);
         }
 
         private void LockAllCells() {
@@ -206,5 +218,11 @@ namespace BomberMario {
             _totalBombs--;
             EndGame();
         }
+        
+        public void LoadBoard() {
+            _gameMaster.TurnChange();
+            SceneManager.LoadScene("MainBoard");
+        }
     }
+    
 }

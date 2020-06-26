@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
+using Board.Character;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace CollectTheCoins {
@@ -8,17 +10,24 @@ namespace CollectTheCoins {
 
         private float _time;
         private const int Size = 25;
+        private int _totalCoinsValue;
+        private bool _gameEnded;
         private GameObject[,] _board;
         private TextMeshProUGUI _timer;
+        private GameMaster.GameMaster _gameMaster;
         
         [SerializeField] private GameObject cellPrefab;
         [SerializeField] private GameObject winText;
         [SerializeField] private GameObject gameOverText;
         [SerializeField] private GameObject time;
+        [SerializeField] private GameObject continueBtn;
         
         
         
         void Start() {
+            _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+            _gameMaster.HideBoard();
+            _gameMaster.HidePlayers();
             _board = new GameObject[Size, Size];
             _time = GetTime(Random.Range(0, 3));
             _timer = time.GetComponent<TextMeshProUGUI>();
@@ -27,6 +36,7 @@ namespace CollectTheCoins {
             
             winText.SetActive(false);
             gameOverText.SetActive(false);
+            continueBtn.SetActive(false);
             DrawBoard();
         }
 
@@ -40,7 +50,19 @@ namespace CollectTheCoins {
         }
 
         private void EndGame() {
-            winText.SetActive(true);
+            if (_gameEnded) return;
+            
+            if (_totalCoinsValue<0) {
+                gameOverText.SetActive(true);
+                var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                player.turnCooldown = 1;
+                player.needUpdateUiOnBoard = true;
+            }
+            else {
+                winText.SetActive(true);
+            }
+            continueBtn.SetActive(true);
+            _gameEnded = true;
         }
 
         private void DrawBoard() {
@@ -76,5 +98,13 @@ namespace CollectTheCoins {
             }
         }
 
+        public void AddCoinsValue(int coinValue) {
+            _totalCoinsValue += coinValue;
+        }
+
+        public void LoadBoard() {
+            _gameMaster.TurnChange();
+            SceneManager.LoadScene("MainBoard");
+        }
     }
 }

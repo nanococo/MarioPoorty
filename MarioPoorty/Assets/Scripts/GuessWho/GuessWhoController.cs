@@ -1,5 +1,7 @@
-﻿using TMPro;
+﻿using Board.Character;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace GuessWho {
@@ -9,18 +11,24 @@ namespace GuessWho {
         private const int Size = 10;
         private GameObject[,] _board;
         private bool _win;
+        private GameMaster.GameMaster _gameMaster;
 
         [SerializeField] private GameObject image;
         [SerializeField] private GameObject cellPrefab;
         [SerializeField] public GameObject attemptsText;
         [SerializeField] public GameObject gameOverText;
         [SerializeField] public GameObject winText;
+        [SerializeField] public GameObject continueBtn;
 
         private void Start() {
+            _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+            _gameMaster.HideBoard();
+            _gameMaster.HidePlayers();
             attemptsText.GetComponent<TextMeshProUGUI>().text = Random.Range(4, 9).ToString();
             _board = new GameObject[Size, Size];
             gameOverText.SetActive(false);
             winText.SetActive(false);
+            continueBtn.SetActive(false);
 
             RandomImageLoad();
             DrawBoard();
@@ -121,7 +129,10 @@ namespace GuessWho {
             else {
                 _win = true;
                 gameOverText.SetActive(true);
+                var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                player.turnCooldown = 1;
             }
+            continueBtn.SetActive(true);
 
             RevealAll();
         }
@@ -141,6 +152,11 @@ namespace GuessWho {
                     cell.GetComponent<SpriteRenderer>().sprite = cell.imagesContainer.emptyImage;
                 }
             }
+        }
+        
+        public void LoadBoard() {
+            _gameMaster.TurnChange();
+            SceneManager.LoadScene("MainBoard");
         }
     }
 }

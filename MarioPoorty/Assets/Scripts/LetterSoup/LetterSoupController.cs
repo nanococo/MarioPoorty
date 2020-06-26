@@ -13,6 +13,7 @@ namespace LetterSoup {
         private const string RandomChar = "abcdefghijklmneopqrstuvwxyz";
         private int _diagonalAttempts;
         private int _secondDiagonalAttempt;
+        private GameMaster.GameMaster _gameMaster;
         
         private List<LetterSoupCell> _horizontal = new List<LetterSoupCell>();
         private List<LetterSoupCell> _vertical = new List<LetterSoupCell>();
@@ -42,6 +43,9 @@ namespace LetterSoup {
 
         // Start is called before the first frame update
         void Start() {
+            _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+            _gameMaster.HideBoard();
+            _gameMaster.HidePlayers();
             var values = Enum.GetValues(typeof(Size));
             _size = (int) values.GetValue(Random.Range(0, 3));
             //_size = 10;

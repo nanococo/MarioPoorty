@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Board.Character;
 using MemoryCards.ScriptableObject;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace MemoryCards {
@@ -18,6 +20,7 @@ namespace MemoryCards {
         private GameObject[,] _board;
         private int[] _cardsIds;
         private bool _firstPlayer = true;
+        private GameMaster.GameMaster _gameMaster;
         
         
         public List<MemoryCardsCell> cardsClicked = new List<MemoryCardsCell>();
@@ -26,6 +29,7 @@ namespace MemoryCards {
         [SerializeField] private GameObject cellPrefab;
         [SerializeField] public GameObject gameOverText;
         [SerializeField] public GameObject winText;
+        [SerializeField] public GameObject continueBtn;
 
         [SerializeField] private GameObject playerText;
         [SerializeField] private GameObject playerPoints;
@@ -34,9 +38,13 @@ namespace MemoryCards {
 
         // Start is called before the first frame update
         void Start() {
+            _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+            _gameMaster.HideBoard();
+            _gameMaster.HidePlayers();
             _board = new GameObject[Height, Length];
             gameOverText.SetActive(false);
             winText.SetActive(false);
+            continueBtn.SetActive(false);
             DrawBoard();
             SetRandomCards();
             
@@ -146,7 +154,11 @@ namespace MemoryCards {
             }
             else {
                 gameOverText.SetActive(true);
+                var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                player.turnCooldown = 1;
+                player.needUpdateUiOnBoard = true;
             }
+            continueBtn.SetActive(true);
         }
 
         private void AddScoreToPlayer() {
@@ -171,6 +183,11 @@ namespace MemoryCards {
                 helperText.GetComponent<TextMeshProUGUI>().color = Color.white;
                 playerText.GetComponent<TextMeshProUGUI>().color = Color.magenta;
             }
+        }
+        
+        public void LoadBoard() {
+            _gameMaster.TurnChange();
+            SceneManager.LoadScene("MainBoard");
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Board.Character;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace MemoryPath {
@@ -8,16 +10,23 @@ namespace MemoryPath {
         private const int Length = 3;
         public int currentRow = 5;
         private GameObject[,] _board;
+        private GameMaster.GameMaster _gameMaster;
 
         [SerializeField] private GameObject cellPrefab;
         [SerializeField] public GameObject attemptsText;
         [SerializeField] public GameObject gameOverText;
         [SerializeField] public GameObject winText;
+        [SerializeField] public GameObject continueBtn;
 
         void Start() {
+            _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+            _gameMaster.HideBoard();
+            _gameMaster.HidePlayers();
+            
             _board = new GameObject[Height, Length];
             gameOverText.SetActive(false);
             winText.SetActive(false);
+            continueBtn.SetActive(false);
             DrawBoard();
             SetRowInteractable();
         }
@@ -37,6 +46,10 @@ namespace MemoryPath {
 
         public void GameOver() {
             gameOverText.SetActive(true); //false to hide, true to show
+            var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+            player.turnCooldown = 1;
+            player.needUpdateUiOnBoard = true;
+            continueBtn.SetActive(true);
         }
 
         private void DrawBoard() {
@@ -58,6 +71,12 @@ namespace MemoryPath {
 
         public void Win() {
             winText.SetActive(true);
+            continueBtn.SetActive(true);
+        }
+        
+        public void LoadBoard() {
+            _gameMaster.TurnChange();
+            SceneManager.LoadScene("MainBoard");
         }
     }
 }
