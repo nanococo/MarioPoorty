@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Board.Character;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -15,9 +14,16 @@ namespace Board {
         private readonly List<int> _optionsForTurn = new List<int>();
         private GameObject[] _board;
         public Transform[] wayPoints;
+        private TextMeshProUGUI actualLogText;
 
         [SerializeField] private GameObject rollBtnTxt;
         [SerializeField] private GameObject currentPlayer;
+        [SerializeField] private GameObject currentPlayerTextLeft;
+        [SerializeField] private GameObject rollBtn;
+        [SerializeField] private GameObject dice1;
+        [SerializeField] private GameObject dice2;
+        [SerializeField] private GameObject finishText;
+        [SerializeField] private GameObject gameEventsText;
         
         
         //Numeric method
@@ -40,6 +46,9 @@ namespace Board {
         
         private void Start() {
             _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+            actualLogText = gameEventsText.GetComponent<TextMeshProUGUI>();
+            actualLogText.text = _gameMaster.logOfEvents;
+            
             order = _gameMaster.gameOrder;
             try {
                 _numberOfPlayers = _gameMaster.numberOfPlayers;
@@ -54,9 +63,21 @@ namespace Board {
             InitializeUiElements();
             _gameMaster.DisplayBoard();
             _gameMaster.DisplayPlayers();
+            
+            currentPlayer.SetActive(false);
+            currentPlayerTextLeft.SetActive(false);
+            rollBtn.SetActive(false);
+            dice1.SetActive(false);
+            dice2.SetActive(false);
+            finishText.SetActive(false);
 
             if (order.Count>0) {
                 numericMethodWindow.SetActive(false);
+                currentPlayer.SetActive(true);
+                currentPlayerTextLeft.SetActive(true);
+                rollBtn.SetActive(true);
+                dice1.SetActive(true);
+                dice2.SetActive(true);
             }
             
         }
@@ -183,6 +204,11 @@ namespace Board {
 
         private void CloseWindow() {
             numericMethodWindow.SetActive(false);
+            currentPlayer.SetActive(true);
+            currentPlayerTextLeft.SetActive(true);
+            rollBtn.SetActive(true);
+            dice1.SetActive(true);
+            dice2.SetActive(true);
         }
 
 
@@ -199,24 +225,47 @@ namespace Board {
             var firstDice = Random.Range(1, 6);
             var secondDice = Random.Range(1, 6);
 
+            dice1.GetComponent<TextMeshProUGUI>().text = firstDice.ToString();
+            dice2.GetComponent<TextMeshProUGUI>().text = secondDice.ToString();
+            
+            _gameMaster.logOfEvents += "\n" + "P" + (order[_gameMaster.currentOrderIndex] + 1) + " moved " + (firstDice+secondDice) + " spaces.";
+            actualLogText.text = _gameMaster.logOfEvents;
+
             var player = _gameMaster._players[order[_gameMaster.currentOrderIndex]].GetComponent<Player>();
 
             if (player.turnCooldown==1) {
                 player.turnCooldown = 0;
                 player.CellBehavior();
             }
-            else {
+            else if (player.turnCooldown==-1) {
+                
+            } else {
                 if (firstDice==6 || secondDice == 6) {
                     Debug.Log("Bowser LOSES");
                 }
                 else {
-                
-                    Debug.Log(firstDice+secondDice);
-                    player._currentIndex += firstDice+secondDice;
-                    player._lockMove = false;
+                    
+                    if (player._currentIndex+firstDice+secondDice>_gameMaster._board.Length-1) {
+                        player.retrogressionValue = (_gameMaster._board.Length-1) - (firstDice + secondDice-1);
+                        player._currentIndex = _gameMaster._board.Length-1;
+                        player._lockMove = false;
+                    } else if (player._currentIndex+firstDice+secondDice==_gameMaster._board.Length-1) {
+                        player._currentIndex = _gameMaster._board.Length-1;
+                        player._lockMove = false;
+                        EndGame();
+                    }
+                    else {
+                        player._currentIndex += firstDice+secondDice-1;
+                        player._lockMove = false;    
+                    }
+                    
                 }    
             }
         }
 
+        private void EndGame() {
+            finishText.SetActive(true);
+            rollBtn.GetComponent<Button>().onClick.RemoveAllListeners();
+        }
     }
 }

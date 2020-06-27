@@ -47,6 +47,7 @@ namespace MemoryPath {
         public void GameOver() {
             gameOverText.SetActive(true); //false to hide, true to show
             var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+            _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has lost Memory Path.";
             player.turnCooldown = 1;
             player.needUpdateUiOnBoard = true;
             continueBtn.SetActive(true);
@@ -72,6 +73,7 @@ namespace MemoryPath {
         public void Win() {
             winText.SetActive(true);
             continueBtn.SetActive(true);
+            _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has won Memory Path.";
         }
         
         public void LoadBoard() {

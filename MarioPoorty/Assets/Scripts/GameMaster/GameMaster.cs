@@ -13,9 +13,9 @@ namespace GameMaster {
         public List<int> gameOrder = new List<int>();
         public int[] boardGeneratorHelper = new int[15];
         public List<GameObject> tubes = new List<GameObject>();
-
-        public int currentPlayerIndex; //Data inside gameOrder
+        
         public int currentOrderIndex; //Index from gameOrder
+        public string logOfEvents = "";
 
         public GameObject[] _players;
         public GameObject[] _board;

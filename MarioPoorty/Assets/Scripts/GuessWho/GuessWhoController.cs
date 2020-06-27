@@ -124,12 +124,14 @@ namespace GuessWho {
             if (_win) return;
             if (id == _imageIndex) {
                 winText.SetActive(true);
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has won Guess Who.";
                 _win = true;
             }
             else {
                 _win = true;
                 gameOverText.SetActive(true);
                 var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has lost Guess Who.";
                 player.turnCooldown = 1;
             }
             continueBtn.SetActive(true);

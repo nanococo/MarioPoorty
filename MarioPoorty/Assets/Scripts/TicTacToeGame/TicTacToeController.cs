@@ -79,22 +79,33 @@ namespace TicTacToeGame {
             if (selectedSquares>=9) {
                 gameOverText.SetActive(true);
                 var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has lost Tic Tac Toe.";
                 player.turnCooldown = 1;
                 continueBtn.SetActive(true);
+                LockBoard();
             }
         }
 
         private void SetWin(bool winLose) {
             if (winLose && _firstPlayer) {
                 winText.SetActive(true);
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has won Tic Tac Toe.";
             }
             else {
                 gameOverText.SetActive(true);
                 var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has lost Tic Tac Toe.";
                 player.turnCooldown = 1;
                 player.needUpdateUiOnBoard = true;
             }
             continueBtn.SetActive(true);
+            LockBoard();
+        }
+
+        private void LockBoard() {
+            foreach (var o in _grid) {
+                o.GetComponent<Cell>().locked = true;
+            }
         }
 
         private bool CheckColumn(int j) {

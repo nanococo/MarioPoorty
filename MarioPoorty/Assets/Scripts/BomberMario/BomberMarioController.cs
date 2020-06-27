@@ -68,14 +68,17 @@ namespace BomberMario {
             Debug.Log(treasureLeft);
             if (treasureLeft<=0) {
                 winText.SetActive(true);
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has won Bomber Mario.";
                 LockAllCells();
+                continueBtn.SetActive(true);
             } else if (_totalBombs<=0) {
                 gameOverText.SetActive(true);
                 var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has lost Bomber Mario.";
                 player.turnCooldown = 1;
                 player.needUpdateUiOnBoard = true;
+                continueBtn.SetActive(true);
             }
-            continueBtn.SetActive(true);
         }
 
         private void LockAllCells() {

@@ -13,6 +13,7 @@ namespace Board.Character {
         public bool _lockMove = true;
         public int turnCooldown;
         public bool needUpdateUiOnBoard;
+        public int retrogressionValue;
         
         private GameMaster.GameMaster _gameMaster;
 
@@ -36,22 +37,54 @@ namespace Board.Character {
 
         public void Move() {
             if (_lockMove) return;
-            
+
             if (_wayPointIndex <= _currentIndex) {
                 transform.position = Vector2.MoveTowards(transform.position,
                     wayPoints[_wayPointIndex].transform.position, moveSpeed * Time.deltaTime*2);
                 if (transform.position == wayPoints[_wayPointIndex].transform.position) {
-                    _wayPointIndex++;
                     if (_wayPointIndex==_currentIndex) {
                         _lockMove = true;
-                       CellBehavior();
+
+                        if (retrogressionValue!=0) {
+                            _currentIndex = retrogressionValue;
+                            retrogressionValue = 0;
+                            _lockMove = false;
+                            _wayPointIndex--;
+                        }
+                        else {
+                            CellBehavior();        
+                        }
+                    }
+                    else {
+                        _wayPointIndex++;
+                    }
+                }
+            } 
+            else if (_wayPointIndex > _currentIndex) {
+                transform.position = Vector2.MoveTowards(transform.position,
+                    wayPoints[_wayPointIndex].transform.position, moveSpeed * Time.deltaTime*2);
+                if (transform.position == wayPoints[_wayPointIndex].transform.position) {
+                    if (_wayPointIndex==_currentIndex) {
+                        _lockMove = true;
+            
+                        if (retrogressionValue!=0) {
+                            _currentIndex = retrogressionValue;
+                            retrogressionValue = 0;
+                            _lockMove = false;
+                        }
+                        else {
+                            CellBehavior();    
+                        }
+                    }
+                    else {
+                        _wayPointIndex--;
                     }
                 }
             }
         }
         
         public void CellBehavior() {
-            var cellType = _gameMaster._board[_currentIndex-1].GetComponent<BoardCell>().cellType;
+            var cellType = _gameMaster._board[_currentIndex].GetComponent<BoardCell>().cellType;
 
             switch (cellType) {
                 case CellTypes.TicTacToe:

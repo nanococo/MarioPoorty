@@ -7,8 +7,12 @@ namespace TicTacToeGame {
         public TicTacToeMarks CellMark { set; get; } = TicTacToeMarks.Empty;
         public TicTacToeController TicTacToeController { get; set; }
 
+        public bool locked;
+
         void OnMouseEnter() {
-            if (CellMark.Equals(TicTacToeMarks.Empty)) {
+            if (locked) return;
+
+                if (CellMark.Equals(TicTacToeMarks.Empty)) {
                 switch (TicTacToeController.CurrentMark) {
                     case TicTacToeMarks.XMark:
                         gameObject.GetComponent<SpriteRenderer>().sprite = imagesContainer.xImage;
@@ -21,12 +25,16 @@ namespace TicTacToeGame {
         }
 
         private void OnMouseExit() {
+            if (locked) return;
+            
             if (CellMark.Equals(TicTacToeMarks.Empty)) {
                 gameObject.GetComponent<SpriteRenderer>().sprite = imagesContainer.emptyImage;    
             }
         }
 
         private void OnMouseDown() {
+            if (locked) return;
+            
             switch (TicTacToeController.CurrentMark) {
                 case TicTacToeMarks.XMark:
                     CellMark = TicTacToeController.CurrentMark; 

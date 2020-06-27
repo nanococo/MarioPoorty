@@ -55,11 +55,13 @@ namespace CollectTheCoins {
             if (_totalCoinsValue<0) {
                 gameOverText.SetActive(true);
                 var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has lost Collect the Coins.";
                 player.turnCooldown = 1;
                 player.needUpdateUiOnBoard = true;
             }
             else {
                 winText.SetActive(true);
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has won Collect the Coins.";
             }
             continueBtn.SetActive(true);
             _gameEnded = true;
