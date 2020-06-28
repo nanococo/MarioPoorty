@@ -8,6 +8,10 @@ namespace MainMenu {
 
         public int NumberOfPlayers { get; private set; } = 2;
 
+        private void Start() {
+            Screen.SetResolution(1536, 864, true);
+        }
+
         public void IncreaseNumberOfPlayers() {
             if (NumberOfPlayers >= 6) return;
             

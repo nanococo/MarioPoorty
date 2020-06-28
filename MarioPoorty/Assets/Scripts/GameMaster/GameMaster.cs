@@ -21,6 +21,8 @@ namespace GameMaster {
         public GameObject[] _board;
         public int numberOfPlayers;
 
+        public BoardController BoardController;
+
         
         [SerializeField] private GameObject cellPrefab;
         [SerializeField] private GameObject playerPrefab; 
@@ -113,13 +115,13 @@ namespace GameMaster {
                 case CellTypes.Tube:
                     return Color.green;
                 case CellTypes.Star:
-                    return Color.gray;
+                    return new Color(0.96f, 0f, 0.388f, 1); //f50063
                 case CellTypes.FireFlower:
-                    return Color.gray;
+                    return new Color(1f, 0.337f, 0f, 1); //ff5600
                 case CellTypes.IceFlower:
-                    return Color.gray;
+                    return new Color(0.592f, 0.525f, 1f, 1); //9786FF
                 case CellTypes.Tail:
-                    return Color.gray;
+                    return new Color(0.392f, 0.012f, 0f, 1); //640300
                 default:
                     throw new ArgumentOutOfRangeException(nameof(cellType), cellType, null);
             }
@@ -243,7 +245,8 @@ namespace GameMaster {
                 var newPlayer = Instantiate(playerPrefab, transform);
                 newPlayer.GetComponent<SpriteRenderer>().sortingOrder = 1;
                 newPlayer.GetComponent<Transform>().position = new Vector2(spacing, 6);
-                
+                GetSpriteForPlayer(i, newPlayer);
+
                 var newPlayerScript = newPlayer.GetComponent<Player>();
                 
                 newPlayerScript.wayPoints = new Transform[BoardController.NumberOfCells];
@@ -253,6 +256,33 @@ namespace GameMaster {
                 
                 _players[i] = newPlayer;
                 spacing++;
+            }
+        }
+
+        private void GetSpriteForPlayer(int key, GameObject newPlayer) {
+            var spriteRenderer = newPlayer.GetComponent<SpriteRenderer>();
+            var transform = newPlayer.GetComponent<Transform>();
+            switch (key) {
+                case 1:
+                    spriteRenderer.sprite = Resources.Load<Sprite>("Images/GuessWho/Luigi");
+                    transform.localScale = new Vector3(0.057f, 0.057f, 0.057f);
+                    break;
+                case 2:
+                    spriteRenderer.sprite = Resources.Load<Sprite>("Images/GuessWho/Peach");
+                    transform.localScale = new Vector3(0.07f, 0.07f, 0.07f);
+                    break;
+                case 3:
+                    spriteRenderer.sprite = Resources.Load<Sprite>("Images/GuessWho/Daisy");
+                    transform.localScale = new Vector3(0.07f, 0.07f, 0.07f);
+                    break;
+                case 4:
+                    spriteRenderer.sprite = Resources.Load<Sprite>("Images/GuessWho/Toad");
+                    transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                    break;
+                case 5:
+                    spriteRenderer.sprite = Resources.Load<Sprite>("Images/GuessWho/Toadette");
+                    transform.localScale = new Vector3(0.06f, 0.06f, 0.06f);
+                    break;
             }
         }
 
@@ -291,6 +321,10 @@ namespace GameMaster {
             else {
                 currentOrderIndex++;
             }
+        }
+
+        public void ForceUpdateLog() {
+            BoardController.actualLogText.text = logOfEvents;
         }
     }
 }

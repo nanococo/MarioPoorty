@@ -14,7 +14,7 @@ namespace Board {
         private readonly List<int> _optionsForTurn = new List<int>();
         private GameObject[] _board;
         public Transform[] wayPoints;
-        private TextMeshProUGUI actualLogText;
+        public TextMeshProUGUI actualLogText;
 
         [SerializeField] private GameObject rollBtnTxt;
         [SerializeField] private GameObject currentPlayer;
@@ -46,6 +46,7 @@ namespace Board {
         
         private void Start() {
             _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+            _gameMaster.BoardController = this;
             actualLogText = gameEventsText.GetComponent<TextMeshProUGUI>();
             actualLogText.text = _gameMaster.logOfEvents;
             
@@ -89,17 +90,25 @@ namespace Board {
                 if (!player.needUpdateUiOnBoard) return;
 
 
-                if (player.turnCooldown == 0) {
-                    rollBtnTxt.GetComponent<TextMeshProUGUI>().text = "Roll";
-                }
-                else if (player.turnCooldown == 1) {
-                    rollBtnTxt.GetComponent<TextMeshProUGUI>().text = "Try Again";
-                }
-                else {
+
+                if (player.numberOfTurnsToLose>0) {
                     rollBtnTxt.GetComponent<TextMeshProUGUI>().text = "No Turn";
                 }
-                    
+                else {
+                    if (player.turnCooldown == 0) {
+                        rollBtnTxt.GetComponent<TextMeshProUGUI>().text = "Roll";
+                    }
+                    else if (player.turnCooldown == 1) {
+                        rollBtnTxt.GetComponent<TextMeshProUGUI>().text = "Try Again";
+                    }
+                    else {
+                        rollBtnTxt.GetComponent<TextMeshProUGUI>().text = "No Turn";
+                    }
+                }
+                
                 player.needUpdateUiOnBoard = false;
+
+                
             }
             catch (Exception) {
                 //Ignored
@@ -224,46 +233,59 @@ namespace Board {
         public void RollDicesAndPlay() {
             var firstDice = Random.Range(1, 6);
             var secondDice = Random.Range(1, 6);
-
+            
             dice1.GetComponent<TextMeshProUGUI>().text = firstDice.ToString();
             dice2.GetComponent<TextMeshProUGUI>().text = secondDice.ToString();
             
-            _gameMaster.logOfEvents += "\n" + "P" + (order[_gameMaster.currentOrderIndex] + 1) + " moved " + (firstDice+secondDice) + " spaces.";
-            actualLogText.text = _gameMaster.logOfEvents;
-
+            
             var player = _gameMaster._players[order[_gameMaster.currentOrderIndex]].GetComponent<Player>();
-
-            if (player.turnCooldown==1) {
-                player.turnCooldown = 0;
-                player.CellBehavior();
+            
+            
+            if (player.numberOfTurnsToLose>0) {
+                dice1.GetComponent<TextMeshProUGUI>().text = "-";
+                dice2.GetComponent<TextMeshProUGUI>().text = "-";
+                player.numberOfTurnsToLose--;
+                _gameMaster.logOfEvents += "\n" + "P" + (order[_gameMaster.currentOrderIndex] + 1) + " lost 1 turn.";
+                actualLogText.text = _gameMaster.logOfEvents;
+                _gameMaster.TurnChange();
+                if (player.numberOfTurnsToLose<=0) {
+                    player.needUpdateUiOnBoard = true;
+                }
             }
-            else if (player.turnCooldown==-1) {
+            else {
+                _gameMaster.logOfEvents += "\n" + "P" + (order[_gameMaster.currentOrderIndex] + 1) + " moved " + (firstDice+secondDice) + " spaces.";
+                actualLogText.text = _gameMaster.logOfEvents;
                 
-            } else {
-                if (firstDice==6 || secondDice == 6) {
-                    Debug.Log("Bowser LOSES");
+                if (player.turnCooldown==1) {
+                    player.turnCooldown = 0;
+                    player.CellBehavior();
                 }
                 else {
-                    
-                    if (player._currentIndex+firstDice+secondDice>_gameMaster._board.Length-1) {
-                        player.retrogressionValue = (_gameMaster._board.Length-1) - (firstDice + secondDice-1);
-                        player._currentIndex = _gameMaster._board.Length-1;
-                        player._lockMove = false;
-                    } else if (player._currentIndex+firstDice+secondDice==_gameMaster._board.Length-1) {
-                        player._currentIndex = _gameMaster._board.Length-1;
-                        player._lockMove = false;
-                        EndGame();
+                    if (firstDice==6 || secondDice == 6) {
+                        Debug.Log("Bowser LOSES");
                     }
                     else {
-                        player._currentIndex += firstDice+secondDice-1;
-                        player._lockMove = false;    
-                    }
                     
+                        if (player._currentIndex+firstDice+secondDice>_gameMaster._board.Length-1) {
+                            player.retrogressionValue = (_gameMaster._board.Length-1) - (firstDice + secondDice-1);
+                            player._currentIndex = _gameMaster._board.Length-1;
+                            player._lockMove = false;
+                        } else if (player._currentIndex+firstDice+secondDice==_gameMaster._board.Length-1) {
+                            player._currentIndex = _gameMaster._board.Length-1;
+                            player._lockMove = false;
+                            EndGame();
+                        }
+                        else {
+                            player._currentIndex += firstDice+secondDice-1;
+                            player._lockMove = false;    
+                        }
+                    
+                    }    
                 }    
             }
         }
 
-        private void EndGame() {
+        public void EndGame() {
             finishText.SetActive(true);
             rollBtn.GetComponent<Button>().onClick.RemoveAllListeners();
         }
