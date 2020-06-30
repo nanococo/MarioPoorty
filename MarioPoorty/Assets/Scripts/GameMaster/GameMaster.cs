@@ -176,13 +176,13 @@ namespace GameMaster {
                     case 7:
                         if (boardGeneratorHelper[7]<=1) {
                             boardGeneratorHelper[7]++;
-                            return CellTypes.MemoryPath;
+                            return CellTypes.GuessWho;
                         }
                         break;
                     case 8:
                         if (boardGeneratorHelper[8]<=1) {
                             boardGeneratorHelper[8]++;
-                            return CellTypes.MemoryCards;
+                            return CellTypes.LetterSoup;
                         }
                         break;
                     case 9:

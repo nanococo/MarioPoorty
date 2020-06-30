@@ -319,8 +319,10 @@ namespace Board {
         }
 
         public void RollDicesAndPlay() {
-            var firstDice = Random.Range(1, 6);
-            var secondDice = Random.Range(1, 6);
+            // var firstDice = Random.Range(1, 6);
+            // var secondDice = Random.Range(1, 6);
+            var firstDice = 5;
+            var secondDice = 5;
             
             dice1.GetComponent<TextMeshProUGUI>().text = firstDice.ToString();
             dice2.GetComponent<TextMeshProUGUI>().text = secondDice.ToString();
@@ -355,7 +357,7 @@ namespace Board {
                     else {
                     
                         if (player._currentIndex+firstDice+secondDice>_gameMaster._board.Length-1) {
-                            player.retrogressionValue = (_gameMaster._board.Length-1) - (firstDice + secondDice-1);
+                            player.retrogressionValue = _gameMaster._board.Length-1 - (player._currentIndex+firstDice+secondDice - _gameMaster._board.Length);
                             player._currentIndex = _gameMaster._board.Length-1;
                             player._lockMove = false;
                         } else if (player._currentIndex+firstDice+secondDice==_gameMaster._board.Length-1) {
@@ -364,7 +366,7 @@ namespace Board {
                             EndGame();
                         }
                         else {
-                            player._currentIndex += firstDice+secondDice-1;
+                            player._currentIndex += firstDice+secondDice;
                             player._lockMove = false;    
                         }
                     

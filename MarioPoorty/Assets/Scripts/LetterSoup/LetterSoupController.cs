@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Board.Character;
 using TMPro;
 using UnityEngine;
@@ -100,9 +101,9 @@ namespace LetterSoup {
                 _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has won Letter Soup.";
             }
             else {
-                winText.SetActive(true);
+                gameOverText.SetActive(true);
                 var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
-                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has lost Memory Cards.";
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has lost Letter Soup.";
                 player.turnCooldown = 1;
                 player.needUpdateUiOnBoard = true;
             }
@@ -216,7 +217,8 @@ namespace LetterSoup {
                 }
 
                 if (counter>=500) {
-                    var lines = System.IO.File.ReadAllLines(@"Assets\Scripts\LetterSoup\WordsSources\words.txt");
+                    var test = Resources.Load<TextAsset>("WordsSources/words").text;
+                    var lines = Regex.Split ( test, "\n" );
                     var currentLength = _words[3].Length;
 
                     if (currentLength<=5) {
@@ -288,7 +290,8 @@ namespace LetterSoup {
 
                 if (counter>=1000) {
                     Debug.Log(counter);
-                    var lines = System.IO.File.ReadAllLines(@"Assets\Scripts\LetterSoup\WordsSources\words.txt");
+                    var test = Resources.Load<TextAsset>("WordsSources/words").text;
+                    var lines = Regex.Split ( test, "\n" );
                     var currentLength = _words[2].Length;
 
                     if (currentLength<=5) {
@@ -300,7 +303,7 @@ namespace LetterSoup {
                     var counter2 = 0;
                     
                     while (counter2<300) {
-                        _words[2] = lines[Random.Range(0, 100)];
+                        _words[2] = lines[Random.Range(0, 100)].Trim();
                         if (_words[2].Length<currentLength) {
                             break;
                         }
@@ -392,9 +395,10 @@ namespace LetterSoup {
         }
 
         private void LoadFile() {
-            var lines = System.IO.File.ReadAllLines(@"Assets\Scripts\LetterSoup\WordsSources\words.txt");
+            var test = Resources.Load<TextAsset>("WordsSources/words").text;
+            var lines = Regex.Split ( test, "\n" );
             for (var i=0; i<4; i++) {
-                _words[i] = lines[Random.Range(0, 100)];
+                _words[i] = lines[Random.Range(0, 100)].Trim();
                 Debug.Log(_words[i]);
             }
         }
