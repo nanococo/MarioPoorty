@@ -184,6 +184,7 @@ namespace Board.Character {
 
                     _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " Used Fire Flower." + " P" + (_gameMaster.gameOrder[randomIndex] + 1) + " was forced to start again!";
                     _gameMaster._players[_gameMaster.gameOrder[randomIndex]].GetComponent<Player>()._currentIndex = 0;
+                    _gameMaster._players[_gameMaster.gameOrder[randomIndex]].GetComponent<Player>()._lockMove = false;
                     _gameMaster._players[_gameMaster.gameOrder[randomIndex]].GetComponent<Player>().NoAction = true;
                     _gameMaster.ForceUpdateLog();
                     _gameMaster.TurnChange();

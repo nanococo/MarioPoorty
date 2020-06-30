@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Board.Character;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace LetterSoup {
@@ -14,6 +16,8 @@ namespace LetterSoup {
         private int _diagonalAttempts;
         private int _secondDiagonalAttempt;
         private GameMaster.GameMaster _gameMaster;
+        private float _time = 120;
+        private TextMeshProUGUI _timerText; 
         
         private List<LetterSoupCell> _horizontal = new List<LetterSoupCell>();
         private List<LetterSoupCell> _vertical = new List<LetterSoupCell>();
@@ -21,37 +25,49 @@ namespace LetterSoup {
         private List<LetterSoupCell> _secondDiagonal = new List<LetterSoupCell>();
 
         private bool _isHorizontalComplete;
-        private bool _isVerticalComplete = false;
-        private bool _isDiagonalComplete = false;
-        private bool _isSecondDiagonoalComplete = false;
+        private bool _isVerticalComplete;
+        private bool _isDiagonalComplete;
+        private bool _isSecondDiagonoalComplete;
         
         
         private int _wordsFound;
         
 
-        [SerializeField]
-        private GameObject cellPrefab;
-        [SerializeField] 
-        private GameObject firstWord;
-        [SerializeField] 
-        private GameObject secondWord;
-        [SerializeField] 
-        private GameObject thirdWord;
-        [SerializeField] 
-        private GameObject fourthWord;
-        
+        [SerializeField] private GameObject cellPrefab;
+        [SerializeField] private GameObject firstWord;
+        [SerializeField] private GameObject secondWord;
+        [SerializeField] private GameObject thirdWord;
+        [SerializeField] private GameObject fourthWord;
+        [SerializeField] private GameObject winText;
+        [SerializeField] private GameObject gameOverText;
+        [SerializeField] private GameObject continueBtn;
+        [SerializeField] private GameObject timer;
+        private bool gameEnded;
+
 
         // Start is called before the first frame update
         void Start() {
-            _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
-            _gameMaster.HideBoard();
-            _gameMaster.HidePlayers();
+            try {
+                _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+                _gameMaster.HideBoard();
+                _gameMaster.HidePlayers();
+            }
+            catch (Exception) {
+                //ignored
+            }
+
+            winText.SetActive(false);
+            gameOverText.SetActive(false);
+            continueBtn.SetActive(false);
+
             var values = Enum.GetValues(typeof(Size));
             _size = (int) values.GetValue(Random.Range(0, 3));
             //_size = 10;
             _board = new GameObject[_size, _size];
+            _timerText = timer.GetComponent<TextMeshProUGUI>();
+            _timerText.text = _time.ToString("0.00");;
             
-            BoardDraw();
+            DrawBoard();
             AdjustCameraSize();
             LoadFile();
             InsertHorizontalWord();
@@ -60,13 +76,47 @@ namespace LetterSoup {
             InsertSecondDiagonal();
             FillRandom();
         }
-        
-        // Update is called once per frame
-        void Update() {
-            CheckWordCompletion();
+
+        private void Update() {
+            if (gameEnded) return;
+            
+            _time -= Time.deltaTime;
+
+            if (_time<0.00) {
+                EndGame();
+            }
+            else if (_isHorizontalComplete && _isVerticalComplete && _isDiagonalComplete && _isSecondDiagonoalComplete){
+                EndGame();
+            }
+            else {
+                _timerText.text = _time.ToString("0.00");
+            }
         }
 
-        private void CheckWordCompletion() {
+        public void EndGame() {
+            gameEnded = true;
+            if (_isHorizontalComplete && _isVerticalComplete && _isDiagonalComplete && _isSecondDiagonoalComplete) {
+                winText.SetActive(true);
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has won Letter Soup.";
+            }
+            else {
+                winText.SetActive(true);
+                var player = _gameMaster._players[_gameMaster.gameOrder[_gameMaster.currentOrderIndex]].GetComponent<Player>(); //Gets active player
+                _gameMaster.logOfEvents += "\n" + "P" + (_gameMaster.gameOrder[_gameMaster.currentOrderIndex] + 1) + " has lost Memory Cards.";
+                player.turnCooldown = 1;
+                player.needUpdateUiOnBoard = true;
+            }
+            continueBtn.SetActive(true);
+            LockBoard();
+        }
+
+        private void LockBoard() {
+            foreach (var o in _board) {
+                o.GetComponent<LetterSoupCell>()._locked = true;
+            }
+        }
+
+        public void CheckWordCompletion() {
 
             if (!_isHorizontalComplete) {
                 foreach (var cell in _horizontal) {
@@ -74,7 +124,11 @@ namespace LetterSoup {
                     if (!_isHorizontalComplete) {
                         break;
                     }
-                }    
+                }
+
+                if (_isHorizontalComplete) {
+                    firstWord.GetComponent<TextMeshProUGUI>().color = Color.green;
+                }
             }
             
             if (!_isVerticalComplete) {
@@ -83,10 +137,38 @@ namespace LetterSoup {
                     if (!_isVerticalComplete) {
                         break;
                     }
-                }    
+                }  
+                
+                if (_isVerticalComplete) {
+                    secondWord.GetComponent<TextMeshProUGUI>().color = Color.green;
+                }
             }
             
+            if (!_isDiagonalComplete) {
+                foreach (var cell in _diagonal) {
+                    _isDiagonalComplete = cell.IsComplete;
+                    if (!_isDiagonalComplete) {
+                        break;
+                    }
+                }
+
+                if (_isDiagonalComplete) {
+                    thirdWord.GetComponent<TextMeshProUGUI>().color = Color.green;
+                }
+            }
             
+            if (!_isSecondDiagonoalComplete) {
+                foreach (var cell in _secondDiagonal) {
+                    _isSecondDiagonoalComplete = cell.IsComplete;
+                    if (!_isSecondDiagonoalComplete) {
+                        break;
+                    }
+                }
+
+                if (_isSecondDiagonoalComplete) {
+                    fourthWord.GetComponent<TextMeshProUGUI>().color = Color.green;
+                }
+            }
         }
 
         private void FillRandom() {
@@ -317,12 +399,14 @@ namespace LetterSoup {
             }
         }
 
-        private void BoardDraw() {
+        private void DrawBoard() {
             var y = 0;
             for (var i=0;i<_size;i++) {
                 var x = 0;
                 for (var j=0;j<_size;j++) {
                     var newCell = Instantiate(cellPrefab, transform);
+                    newCell.GetComponent<SpriteRenderer>().color = Color.black;
+                    newCell.GetComponent<LetterSoupCell>().letterSoupController = this;
                     var newTransform = newCell.GetComponent<Transform>();
                     newTransform.position = new Vector2(x,y);
                     x += 2;
@@ -397,6 +481,11 @@ namespace LetterSoup {
                 default:
                     return Letters.Null;
             }
+        }
+        
+        public void LoadBoard() {
+            _gameMaster.TurnChange();
+            SceneManager.LoadScene("MainBoard");
         }
     }
 }

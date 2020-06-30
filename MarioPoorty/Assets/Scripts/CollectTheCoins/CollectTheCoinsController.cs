@@ -1,5 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
 using Board.Character;
+using TicTacToeGame;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,23 +15,36 @@ namespace CollectTheCoins {
         private bool _gameEnded;
         private GameObject[,] _board;
         private TextMeshProUGUI _timer;
+        private TextMeshProUGUI _scoreText;
         private GameMaster.GameMaster _gameMaster;
         
+        [SerializeField] public ImagesContainer imagesContainer;
+
+
         [SerializeField] private GameObject cellPrefab;
         [SerializeField] private GameObject winText;
         [SerializeField] private GameObject gameOverText;
         [SerializeField] private GameObject time;
         [SerializeField] private GameObject continueBtn;
+        [SerializeField] private GameObject score;
         
         
         
         void Start() {
-            _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
-            _gameMaster.HideBoard();
-            _gameMaster.HidePlayers();
+
+            try {
+                _gameMaster = GameObject.Find("GameMasterController").GetComponent<GameMaster.GameMaster>();
+                _gameMaster.HideBoard();
+                _gameMaster.HidePlayers();
+            }
+            catch (Exception) {
+                //ignored
+            }
+
             _board = new GameObject[Size, Size];
             _time = GetTime(Random.Range(0, 3));
             _timer = time.GetComponent<TextMeshProUGUI>();
+            _scoreText = score.GetComponent<TextMeshProUGUI>();
             _timer.text = _time.ToString("0.00");
             
             
@@ -41,12 +55,15 @@ namespace CollectTheCoins {
         }
 
         private void Update() {
+            if (_gameEnded) return;
+            
             _time -= Time.deltaTime;
             if ( _time < 0 ) {
                 EndGame();
             } else {
                 _timer.text = _time.ToString("0.00");
             }
+            _scoreText.text = _totalCoinsValue.ToString();
         }
 
         private void EndGame() {
@@ -65,6 +82,13 @@ namespace CollectTheCoins {
             }
             continueBtn.SetActive(true);
             _gameEnded = true;
+            LockBoard();
+        }
+
+        private void LockBoard() {
+            foreach (var o in _board) {
+                o.GetComponent<CollectTheCoinsCell>().Clicked = true;
+            }
         }
 
         private void DrawBoard() {

@@ -3,7 +3,7 @@
 namespace BomberMario.Bombs {
     public class CrossBomb : Bomb {
 
-        public CrossBomb(Sprite sprite, BombType bombType) : base(sprite, bombType) {
+        public CrossBomb(BombType bombType) : base(bombType) {
         }
         
         public override void ExplosionCalculate(GameObject[,] board, int i, int j) {

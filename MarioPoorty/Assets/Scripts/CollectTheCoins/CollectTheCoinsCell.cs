@@ -1,18 +1,17 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CollectTheCoins {
     public class CollectTheCoinsCell : MonoBehaviour {
 
         public int Value { get; set; }
-        private bool _clicked = false;
+        public bool Clicked { get; set; }
         public CollectTheCoinsController CollectTheCoinsController { get; set; }
 
         private void OnMouseDown() {
-            if(_clicked) return;
-            
+            if(Clicked) return;
+            GetComponent<SpriteRenderer>().sprite = CollectTheCoinsController.imagesContainer.xImage;
             CollectTheCoinsController.AddCoinsValue(Value);
-            _clicked = true;
+            Clicked = true;
         }
     }
 }

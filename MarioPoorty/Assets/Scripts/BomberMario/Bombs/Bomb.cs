@@ -3,13 +3,10 @@ using UnityEngine;
 
 namespace BomberMario.Bombs {
     public abstract class Bomb {
-
-        protected readonly Sprite ImageClear;
         protected int Size;
         public BombType BombType;
 
-        protected Bomb(Sprite sprite, BombType bombType) {
-            ImageClear = sprite;
+        protected Bomb(BombType bombType) {
             BombType = bombType;
         }
         

@@ -50,14 +50,14 @@ namespace BomberMario {
             var values = Enum.GetValues(typeof(Size));
             _size = (int) values.GetValue(Random.Range(0, 3));
             Board = new GameObject[_size, _size];
-            Bomb = new SimpleBomb(imagesContainer.emptyImage, BombType.Simple);
+            Bomb = new SimpleBomb(BombType.Simple);
             
             
             gameOverText.SetActive(false);
             winText.SetActive(false);
             continueBtn.SetActive(false);
 
-            BoardDraw();
+            DrawBoard();
             AdjustCameraSize();
             AddRandomTreasure();
             GenerateRandomBombsAmount();
@@ -125,7 +125,7 @@ namespace BomberMario {
             Board[x+1, y+1].GetComponent<BomberMarioCell>().IsTreasure = true;
         }
 
-        private void BoardDraw() {
+        private void DrawBoard() {
             var y = 0;
             for (var i=0;i<_size;i++) {
                 var x = 0;
@@ -166,16 +166,16 @@ namespace BomberMario {
         public void SetBombType(int bombType) {
             switch (bombType) {
                 case 0:
-                    Bomb = new SimpleBomb(imagesContainer.emptyImage, BombType.Simple);
+                    Bomb = new SimpleBomb(BombType.Simple);
                     break;
                 case 1:
-                    Bomb = new DoubleBomb(imagesContainer.emptyImage, BombType.Double);
+                    Bomb = new DoubleBomb(BombType.Double);
                     break;
                 case 2:
-                    Bomb = new CrossBomb(imagesContainer.emptyImage, BombType.Cross);
+                    Bomb = new CrossBomb(BombType.Cross);
                     break;
                 case 3:
-                    Bomb = new LineBomb(imagesContainer.emptyImage, BombType.Line);
+                    Bomb = new LineBomb(BombType.Line);
                     break;
             }
         }

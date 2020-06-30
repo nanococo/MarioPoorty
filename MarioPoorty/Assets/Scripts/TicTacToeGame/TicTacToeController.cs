@@ -39,6 +39,10 @@ namespace TicTacToeGame {
             continueBtn.SetActive(false);
             
             playerText.GetComponent<TextMeshProUGUI>().color = Color.magenta;
+            DrawBoard();
+        }
+
+        private void DrawBoard() {
             var y = 2;
             for (var i=0;i<3;i++) {
                 var x = -2;

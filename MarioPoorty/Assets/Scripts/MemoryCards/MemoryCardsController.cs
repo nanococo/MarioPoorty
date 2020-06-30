@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using Board.Character;
 using MemoryCards.ScriptableObject;
 using TMPro;
@@ -101,7 +99,6 @@ namespace MemoryCards {
         }
 
         public Sprite GetImageById(int id) {
-            var values = Enum.GetValues(typeof(Cards));
             switch ((Cards)id) {
                 case Cards.Coin:
                     return memoryCardsIconsContainer.coin;

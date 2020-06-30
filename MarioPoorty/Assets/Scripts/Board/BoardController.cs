@@ -37,7 +37,16 @@ namespace Board {
         [SerializeField] private GameObject[] orderNumbers;
         [SerializeField] private GameObject[] playerOrders;
         
-        
+        //Dices method
+        [SerializeField] private GameObject dicesMethodWindow;
+        [SerializeField] private GameObject dicesMethodRollBtn;
+        [SerializeField] private GameObject dicesMethodRollBtnText;
+        [SerializeField] private GameObject dicesMethodDice1;
+        [SerializeField] private GameObject dicesMethodDice2;
+        [SerializeField] private GameObject[] dicesMethodOrderNumbers;
+        [SerializeField] private GameObject[] dicesMethodPlayerOrders;
+        [SerializeField] private GameObject dicesMethodCurrentPlayerDecision;
+
 
         //private readonly List<int> order = new List<int>();
         private List<int> order;
@@ -61,7 +70,7 @@ namespace Board {
             _randomNumberForOrder = Random.Range(1, 1001);
             //_randomNumberForOrder = 632;
             
-            InitializeUiElements();
+            
             _gameMaster.DisplayBoard();
             _gameMaster.DisplayPlayers();
             
@@ -71,17 +80,32 @@ namespace Board {
             dice1.SetActive(false);
             dice2.SetActive(false);
             finishText.SetActive(false);
+            
+            numericMethodWindow.SetActive(false);
+            dicesMethodWindow.SetActive(false);
 
             if (order.Count>0) {
-                numericMethodWindow.SetActive(false);
                 currentPlayer.SetActive(true);
                 currentPlayerTextLeft.SetActive(true);
                 rollBtn.SetActive(true);
                 dice1.SetActive(true);
                 dice2.SetActive(true);
             }
-            
+            else {
+                var rand = Random.Range(0, 2);
+
+                if (rand==1) {
+                    dicesMethodWindow.SetActive(true);
+                    InitializeUiElementsDicesMethod();
+                }
+                else {
+                    numericMethodWindow.SetActive(true);
+                    InitializeUiElementsNumericMethod();
+                }
+            }
         }
+
+        
 
         private void Update() {
             try {
@@ -115,7 +139,7 @@ namespace Board {
             }
         }
 
-        private void InitializeUiElements() {
+        private void InitializeUiElementsNumericMethod() {
             for (var i = 0; i < 6; i++) {
                 orderNumbers[i].SetActive(false);
                 playerOrders[i].SetActive(false);
@@ -128,11 +152,62 @@ namespace Board {
             
             btn.GetComponent<Button>().onClick.AddListener(GetValueFromInput);
         }
+        
+        private void InitializeUiElementsDicesMethod() {
+            for (var i = 0; i < 6; i++) {
+                dicesMethodPlayerOrders[i].SetActive(false);
+                dicesMethodOrderNumbers[i].SetActive(false);
+            }
+
+            for (var i = 0; i < _numberOfPlayers; i++) {
+                dicesMethodOrderNumbers[i].SetActive(true);
+                dicesMethodPlayerOrders[i].SetActive(true);
+            }
+            dicesMethodRollBtn.GetComponent<Button>().onClick.AddListener(RollDiceMethod);
+        }
+
+        private void RollDiceMethod() {
+            var firstDice = Random.Range(1, 6);
+            var secondDice = Random.Range(1, 6);
+
+            dicesMethodDice1.GetComponent<TextMeshProUGUI>().text = firstDice.ToString();
+            dicesMethodDice2.GetComponent<TextMeshProUGUI>().text = secondDice.ToString();
+            
+            
+            
+            if (_optionsForTurn.Count == _numberOfPlayers-1) {
+                _optionsForTurn.Add(firstDice+secondDice);
+                dicesMethodRollBtnText.GetComponent<TextMeshProUGUI>().text = "Reveal";
+                var btnListener = dicesMethodRollBtn.GetComponent<Button>();
+                btnListener.onClick.RemoveAllListeners();
+                btnListener.onClick.AddListener(CalculateOrderDiceMethod);
+            } else if (_optionsForTurn.Count < _numberOfPlayers) {
+                _optionsForTurn.Add(firstDice+secondDice);
+                dicesMethodCurrentPlayerDecision.GetComponent<TextMeshProUGUI>().text = (_optionsForTurn.Count + 1).ToString();
+            }
+        }
+
+        private void CalculateOrderDiceMethod() {
+            for (var i = 0; i < _numberOfPlayers; i++) {
+                var compare = 0;
+                var highIndex = 0;
+                for (var j = 0; j < _optionsForTurn.Count; j++) {
+                    if (_optionsForTurn[j]>compare) {
+                        compare = _optionsForTurn[j];
+                        highIndex = j;
+                    }
+                }
+                
+                order.Add(highIndex);
+                _optionsForTurn[highIndex] = 0;
+            }
+            DisplayOrderDiceMethod();
+        }
 
         private void GetValueFromInput() {
+            if (string.IsNullOrEmpty(inputFieldText.GetComponent<TextMeshProUGUI>().text)) return;
+            
             inputFieldText.GetComponent<TextMeshProUGUI>().text = " ";
-            
-            
             if (_optionsForTurn.Count == _numberOfPlayers-1) {
                 var input = inputFieldText.GetComponent<TextMeshProUGUI>().text.Trim((char)8203);
                 try {
@@ -211,8 +286,21 @@ namespace Board {
             }
         }
 
+        private void DisplayOrderDiceMethod() {
+            var btnListener = dicesMethodRollBtn.GetComponent<Button>();
+            btnListener.onClick.RemoveAllListeners();
+            btnListener.onClick.AddListener(CloseWindow);
+            dicesMethodRollBtnText.GetComponent<TextMeshProUGUI>().text = "Close";
+
+            for (var i = 0; i < order.Count; i++) {
+                dicesMethodPlayerOrders[i].SetActive(true);
+                dicesMethodPlayerOrders[i].GetComponent<TextMeshProUGUI>().text = "P" + (order[i]+1);
+            }
+        }
+
         private void CloseWindow() {
             numericMethodWindow.SetActive(false);
+            dicesMethodWindow.SetActive(false);
             currentPlayer.SetActive(true);
             currentPlayerTextLeft.SetActive(true);
             rollBtn.SetActive(true);

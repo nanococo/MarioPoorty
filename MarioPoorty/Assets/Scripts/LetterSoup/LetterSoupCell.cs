@@ -9,20 +9,20 @@ namespace LetterSoup {
         public bool IsComplete { get; set; }
         public bool IsPartOfSolution { get; set; }
 
+        public LetterSoupController letterSoupController;
 
+        public bool _locked { get; set; }
+        
         [SerializeField]
         private LettersSoupImageContainer lettersSoupImageContainer;
 
-        void OnMouseEnter() {
-        }
-
-        private void OnMouseExit() {
-        }
-
         private void OnMouseDown() {
+            if(_locked) return;
             //gameObject.GetComponent<SpriteRenderer>().sprite = lettersSoupImageContainer.x;
             if (IsPartOfSolution) {
                 IsComplete = true;
+                GetComponent<SpriteRenderer>().color = Color.green;
+                letterSoupController.CheckWordCompletion();
             }
         }
 

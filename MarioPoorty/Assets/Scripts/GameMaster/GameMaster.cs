@@ -140,8 +140,7 @@ namespace GameMaster {
                     case 1:
                         if (boardGeneratorHelper[1]<=1) {
                             boardGeneratorHelper[1]++;
-                            //return CellTypes.LetterSoup;
-                            return CellTypes.TicTacToe;
+                            return CellTypes.LetterSoup;
                         }
                         break;
                     case 2:

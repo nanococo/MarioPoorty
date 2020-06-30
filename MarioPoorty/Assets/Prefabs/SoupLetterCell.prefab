@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7709a8fbc9d443fac02d04688564182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lettersSoupImageContainer: {fileID: 11400000, guid: f3ab17eebeab81e41a9975e7dd705e53,
+  lettersSoupImageContainer: {fileID: 11400000, guid: f50f9b14fee0a304a89791bb8240b809,
     type: 2}
 --- !u!61 &5123508062992362523
 BoxCollider2D:
